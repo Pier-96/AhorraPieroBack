@@ -9,6 +9,8 @@ export const config = {
   googleCredentials: loadGoogleCredentials(),
   fixedInversion: Number(process.env.APORTACION_FIJA_INVERSION) || 200,
   frontendOrigin: process.env.FRONTEND_ORIGIN || null,
+  appPassword: process.env.APP_PASSWORD,
+  sessionSecret: process.env.SESSION_SECRET,
 };
 
 function loadGoogleCredentials() {

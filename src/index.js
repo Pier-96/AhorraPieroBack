@@ -7,8 +7,11 @@ import movimientosRouter from "./routes/movimientos.js";
 import resumenRouter from "./routes/resumen.js";
 import inversionRouter from "./routes/inversion.js";
 import configRouter from "./routes/config.js";
+import authRouter from "./routes/auth.js";
+import { requireAuth } from "./auth.js";
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin(origin, callback) {
@@ -31,6 +34,8 @@ app.get(
   })
 );
 
+app.use("/api/auth", authRouter);
+app.use("/api", requireAuth);
 app.use("/api/upload-pdf", uploadRouter);
 app.use("/api/movimientos", movimientosRouter);
 app.use("/api/resumen-mensual", resumenRouter);
