@@ -6,7 +6,7 @@ import {
   upsertResumenMensual,
 } from "../sheets.js";
 import { calcularResumenMensual } from "../services/calculo.js";
-import { asyncHandler } from "../utils/errors.js";
+import { asyncHandler, HttpError } from "../utils/errors.js";
 
 const router = Router();
 
@@ -22,6 +22,7 @@ router.get(
   "/:mes",
   asyncHandler(async (req, res) => {
     const mes = req.params.mes;
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) throw new HttpError(400, "El mes no es válido.");
     const [movimientos, configuracion] = await Promise.all([
       getMovimientos(mes),
       getConfiguracion(),
@@ -35,6 +36,7 @@ router.post(
   "/:mes",
   asyncHandler(async (req, res) => {
     const mes = req.params.mes;
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) throw new HttpError(400, "El mes no es válido.");
     const [movimientos, configuracion] = await Promise.all([
       getMovimientos(mes),
       getConfiguracion(),

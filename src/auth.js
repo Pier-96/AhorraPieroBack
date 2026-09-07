@@ -34,8 +34,9 @@ export function requireAuth(req, res, next) {
   const token = req.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return next(new HttpError(401, "Inicia sesión para continuar."));
 
-  const [payload, signature] = token.split(".");
-  if (!payload || !signature || !secureEqual(signature, sign(payload))) {
+  const parts = token.split(".");
+  const [payload, signature] = parts;
+  if (parts.length !== 2 || !payload || !signature || !secureEqual(signature, sign(payload))) {
     return next(new HttpError(401, "La sesión no es válida."));
   }
 

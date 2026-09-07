@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/errors.js";
 
 const router = Router();
 const upload = multer({
+  storage: multer.memoryStorage(),
   limits: { fileSize: 15 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === "application/pdf") cb(null, true);
@@ -19,6 +20,9 @@ router.post(
   upload.single("pdf"),
   asyncHandler(async (req, res) => {
     if (!req.file) throw new Error("No se recibió ningún PDF.");
+    if (req.file.buffer.subarray(0, 5).toString() !== "%PDF-") {
+      throw new Error("El archivo no contiene un PDF válido.");
+    }
     const texto = await extractPdfText(req.file.buffer);
     const movimientos = await extraerMovimientos(texto);
     const guardados = await addMovimientos(movimientos);

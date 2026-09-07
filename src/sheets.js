@@ -44,10 +44,6 @@ export async function getSheet(title = SHEETS.movimientos) {
   return sheet;
 }
 
-export function sheetTitles() {
-  return SHEETS;
-}
-
 function toNumber(v) {
   if (v === "" || v == null) return 0;
   const n = Number(String(v).replace(",", "."));
@@ -203,15 +199,4 @@ export async function addInversion(row) {
   const sheet = await getSheet(SHEETS.inversion);
   await sheet.addRow(row);
   return row;
-}
-
-export async function getMeses() {
-  const sheet = await getSheet(SHEETS.movimientos);
-  const rows = await sheet.getRows();
-  const set = new Set();
-  for (const r of rows) {
-    const f = r.get("fecha");
-    if (f && String(f).length >= 7) set.add(String(f).slice(0, 7));
-  }
-  return [...set].sort();
 }

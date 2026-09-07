@@ -2,19 +2,10 @@ import { Router } from "express";
 import {
   getMovimientos,
   updateMovimiento,
-  getMeses,
 } from "../sheets.js";
-import { asyncHandler } from "../utils/errors.js";
+import { asyncHandler, HttpError } from "../utils/errors.js";
 
 const router = Router();
-
-router.get(
-  "/meses",
-  asyncHandler(async (req, res) => {
-    const meses = await getMeses();
-    res.json({ meses });
-  })
-);
 
 router.get(
   "/",
@@ -33,6 +24,10 @@ router.patch(
     if (req.body.subcategoria !== undefined)
       patch.subcategoria = req.body.subcategoria;
     if (req.body.revisado !== undefined) patch.revisado = req.body.revisado;
+    if (!Object.keys(patch).length) throw new HttpError(400, "No hay cambios para guardar.");
+    if (patch.revisado !== undefined && typeof patch.revisado !== "boolean") {
+      throw new HttpError(400, "El campo revisado debe ser verdadero o falso.");
+    }
     const updated = await updateMovimiento(req.params.id, patch);
     res.json(updated);
   })
