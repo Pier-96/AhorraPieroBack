@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: ahorrapiero-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
