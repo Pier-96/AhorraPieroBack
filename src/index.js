@@ -11,9 +11,15 @@ import configRouter from "./routes/config.js";
 const app = express();
 app.use(
   cors({
-    origin: config.frontendOrigin
-      ? [config.frontendOrigin, "http://localhost:5173"]
-      : true,
+    origin(origin, callback) {
+      // Health checks no tienen Origin. En navegador aceptamos producción,
+      // desarrollo y previews generados por el proyecto de Vercel.
+      if (!origin || !config.frontendOrigin) return callback(null, true);
+      const isLocal = origin === "http://localhost:5173";
+      const isProduction = origin === config.frontendOrigin;
+      const isVercelPreview = /^https:\/\/ahorra-piero-[a-z0-9-]+\.vercel\.app$/i.test(origin);
+      return callback(null, isLocal || isProduction || isVercelPreview);
+    },
   })
 );
 app.use(express.json());
